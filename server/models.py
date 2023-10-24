@@ -13,13 +13,24 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'user_table'
     #table columns
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable = False)
     _password_hash = db.Column(db.String)
-    email = db.Column(db.String)
+    email = db.Column(db.String, nullable = False)
     profile_img = db.Column(db.String)
-
     #relationships
     food_truck =db.relationship('FoodTruck', back_populates = 'user')
+
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
+    
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
+    
+    def authenticate(self,password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
 
 #Table name
@@ -27,9 +38,9 @@ class FoodTruck(db.Model, SerializerMixin):
     __tablename__ = 'food_truck_table'
     #Table Columns
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    food_type = db.Column(db.String)
-    description = db.Column(db.String)
+    name = db.Column(db.String, nullable = False)
+    food_type = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable = False)
     # foreign keys
     user_id = db.Column(db.Integer, db.ForeignKey('user_table.id'))
 
@@ -42,9 +53,9 @@ class Event(db.Model, SerializerMixin):
     __tablename__ = 'event_table'
     #table columns
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String)
-    location = db.Column(db.String)
-    description = db.Column(db.String)
+    name = db.Column(db.String, nullable = False)
+    location = db.Column(db.String, nullable = False)
+    description = db.Column(db.String, nullable = False)
 
     #relationships
     food_truck_event = db.relationship('FoodTruckEvent', back_populates = 'event')
@@ -71,3 +82,7 @@ class FoodTruckEvent(db.Model, SerializerMixin):
 
     #serialization
     serialize_rules = ('-food_truck.food_truck_event', '-event.food_truck_event')
+
+    
+    
+    
