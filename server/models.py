@@ -81,7 +81,13 @@ class FoodTruckEvent(db.Model, SerializerMixin):
     event = db.relationship('Event', back_populates = 'food_truck_event')
 
     #serialization
-    serialize_rules = ('-food_truck.food_truck_event', '-event.food_truck_event')
+    serialize_rules = ('-food_truck.food_truck_event', '-event.food_truck_event', 'profit')
+
+    def profit(self):
+        total_food = self.food_sales - self.food_cost
+        total_beverage = self.beverage_sales - self.beverage_cost
+        profit = (total_beverage + total_food) -self.fuel_cost
+        return "S{:,.2f}".format(profit)
 
     
     

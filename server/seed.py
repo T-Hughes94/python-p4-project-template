@@ -16,7 +16,7 @@ if __name__ == '__main__':
         db.drop_all()
         db.create_all()
 
-        
+        #create some users
         user1 = User(name="Terence Hughes", _password_hash = '123', email="terencehughes@example.com", profile_img="img1.jpg")
         user2 = User(name="Sam Waters", _password_hash = "123", email="samwaters@example.com", profile_img="img2.jpg")
 

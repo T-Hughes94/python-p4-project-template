@@ -3,6 +3,7 @@
 # Standard library imports
 
 # Remote library imports
+from flask import session
 from flask import request
 from flask_restful import Resource
 from models import User, FoodTruck, FoodTruckEvent, Event
@@ -29,7 +30,7 @@ class User_Route(Resource):
         try:
             new_user = User(
                 name = data['name'],
-                _password_hash = data['_password_hash'],
+                password_hash = data['password'],
                 email = data['email']
             )
         except ValueError as e:
@@ -38,10 +39,26 @@ class User_Route(Resource):
 
         db.session.add(new_user)
         db.session.commit()
+        session['user_id'] = new_user.id
 
         return new_user.to_dict(), 200
 
 api.add_resource(User_Route, '/users')
+
+class Login_Route(Resource):
+    def post(self):
+        data = request.get_json()
+        name = data["username"]
+        password_hash = data["password"]
+        user = User.query.filter_by(name=name).first()
+        if user and user.authenticate(password_hash):
+            session["user_id"] = user.id
+            return user.to_dict(), 200 
+        else:
+            return {"errors"}
+
+api.add_resource(Login_Route, "/signin" )
+        
         
 class UserById_Route(Resource):
     def get(self, id):
@@ -249,7 +266,7 @@ class FoodTruckEventById_Route(Resource):
     def get(self, id):
         food_truck_event = FoodTruckEvent.query.filter_by(id=id).first()
         if food_truck_event:
-            food_truck_event.to_dict(), 200
+            return food_truck_event.to_dict(), 200
         return {"error": "Event not found"}, 404
     
     def patch(self, id):
