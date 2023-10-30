@@ -31,6 +31,21 @@ class User(db.Model, SerializerMixin):
     
     def authenticate(self,password):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
+    
+    
+    @validates('name')
+    def set_price(self, key, name):
+        if isinstance(name, str) and 1 <= name <= 20:
+            return name
+        else:
+            raise ValueError('Not a valid name')
+        
+    @validates('email')
+    def set_price(self, key, email):
+        if isinstance(email, str) and 1 <= email <= 50:
+            return email
+        else:
+            raise ValueError('Not a valid email')
 
 
 #Table name
@@ -48,6 +63,20 @@ class FoodTruck(db.Model, SerializerMixin):
     user = db.relationship('User', back_populates = 'food_truck')
     food_truck_event = db.relationship('FoodTruckEvent', back_populates = 'food_truck')
 
+    @validates('name')
+    def set_price(self, key, name):
+        if isinstance(name, str) and 1 <= name <= 20:
+            return name
+        else:
+            raise ValueError('Not a valid name')
+    
+    @validates('location')
+    def set_price(self, key, location):
+        if isinstance(location, str) and 1 <= location <= 50:
+            return location
+        else:
+            raise ValueError('Not a valid location')
+
 #table name
 class Event(db.Model, SerializerMixin):
     __tablename__ = 'event_table'
@@ -59,6 +88,20 @@ class Event(db.Model, SerializerMixin):
 
     #relationships
     food_truck_event = db.relationship('FoodTruckEvent', back_populates = 'event')
+
+    @validates('name')
+    def set_price(self, key, name):
+        if isinstance(name, str) and 1 <= name <= 20:
+            return name
+        else:
+            raise ValueError('Not a valid name')
+        
+    @validates('location')
+    def set_price(self, key, location):
+        if isinstance(location, str) and 1 <= location <= 50:
+            return location
+        else:
+            raise ValueError('Not a valid location')
 
 
 #table name
@@ -83,11 +126,22 @@ class FoodTruckEvent(db.Model, SerializerMixin):
     #serialization
     serialize_rules = ('-food_truck.food_truck_event', '-event.food_truck_event', 'profit')
 
+
+    #calculate total profit
     def profit(self):
         total_food = self.food_sales - self.food_cost
         total_beverage = self.beverage_sales - self.beverage_cost
         profit = (total_beverage + total_food) -self.fuel_cost
         return "S{:,.2f}".format(profit)
+    #profit from food
+    def food_profit(self):
+        return "${:,.2f}".format(self.food_sales - self.food_cost)
+    #profit from beverages
+    def bev_profit(self):
+        return "${:,.2f}".format(self.beverage_sales - self.beverage_cost)
+    #total costs
+    def cost(self):
+        return "${:,.2f}".format(self.food_cost + self.beverage_cost)
 
     
     
