@@ -1,9 +1,15 @@
 import React from 'react'
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
-function EventForm() {
+function Events() {
   return (
-    <div>eventform</div>
-  )
+  <InputGroup className="mb-3">
+    <InputGroup.Text>$</InputGroup.Text>
+    <InputGroup.Text>0.00</InputGroup.Text>
+    <Form.Control aria-label="Dollar amount (with dot and two decimal places)" />
+  </InputGroup>
+  );
 }
 
-export default EventForm
+export default Events;

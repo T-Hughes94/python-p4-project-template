@@ -3,8 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import session
-from flask import request
+from flask import request, session
 from flask_restful import Resource
 from models import User, FoodTruck, FoodTruckEvent, Event
 
@@ -31,7 +30,8 @@ class User_Route(Resource):
             new_user = User(
                 name = data['name'],
                 password_hash = data['password'],
-                email = data['email']
+                email = data['email'],
+                profile_img=data['profile_img']
             )
         except ValueError as e:
             return{"errors": str(e)}, 400
@@ -53,11 +53,32 @@ class Login_Route(Resource):
         user = User.query.filter_by(name=name).first()
         if user and user.authenticate(password_hash):
             session["user_id"] = user.id
-            return user.to_dict(), 200 
+            response = user.to_dict(), 200 
+            # response.set_cookie("session_id", session.sid, httponly=True)
+            return response
         else:
             return {"errors"}
 
 api.add_resource(Login_Route, "/signin" )
+
+# check session 
+class CheckSession(Resource):
+    def get(self):
+        user = User.query.filter(User.id == session.get('user_id')).first()
+        if user:
+            return user.to_dict()
+        else:
+            return {'message': '401: Not Authorized'}, 401
+
+api.add_resource(CheckSession, '/check_session')
+
+# logout
+class Logout(Resource):
+    def delete(self):
+        session['user_id'] = None
+        return {}, 204
+    
+api.add_resource(Logout, '/logout')
         
         
 class UserById_Route(Resource):

@@ -35,14 +35,14 @@ class User(db.Model, SerializerMixin):
     
     @validates('name')
     def set_price(self, key, name):
-        if isinstance(name, str) and 1 <= name <= 20:
+        if isinstance(name, str) and 1 <= len(name) <= 20:
             return name
         else:
             raise ValueError('Not a valid name')
         
     @validates('email')
     def set_price(self, key, email):
-        if isinstance(email, str) and 1 <= email <= 50:
+        if isinstance(email, str) and 1 <= len(email) <= 50:
             return email
         else:
             raise ValueError('Not a valid email')

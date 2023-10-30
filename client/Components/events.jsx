@@ -2,8 +2,9 @@ import React from 'react'
 
 function Events() {
   return (
-    <div>E</div>
+    <div>Events</div>
   )
 }
 
 export default Events
+
