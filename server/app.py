@@ -263,6 +263,7 @@ class FoodTruckEvent_Route(Resource):
     
     def post(self):
         data = request.get_json()
+        print(data)
         try:
             new_food_truck_event = FoodTruckEvent(
              food_sales = data['food_sales'],
@@ -270,13 +271,25 @@ class FoodTruckEvent_Route(Resource):
              food_cost = data['food_cost'],
              beverage_cost = data['beverage_cost'],
              fuel_cost = data['fuel_cost'],
-             hourly_wages = data['hourly_wages']
+            #  hourly_wages = data['hourly_wages'],
+             food_truck_id=data['food_truck_id'],
+             event_id=data['event_id']
              )
+            
+            event = Event.query.filter_by(id = new_food_truck_event.event_id).first()
+            print(event)
+
+            new_event = Event(
+                name = event.name,
+                location = event.location,
+                description = event.description,
+            )
         except ValueError as e:
             return {"errors": str(e)}, 400
             
 
         db.session.add(new_food_truck_event)
+        db.session.add(new_event)
         db.session.commit()
 
         return new_food_truck_event.to_dict(), 200

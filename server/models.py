@@ -65,14 +65,14 @@ class FoodTruck(db.Model, SerializerMixin):
 
     @validates('name')
     def set_price(self, key, name):
-        if isinstance(name, str) and 1 <= name <= 20:
+        if isinstance(name, str) and 1 <= len(name) <= 20:
             return name
         else:
             raise ValueError('Not a valid name')
     
     @validates('location')
     def set_price(self, key, location):
-        if isinstance(location, str) and 1 <= location <= 50:
+        if isinstance(location, str) and 1 <= len(location) <= 50:
             return location
         else:
             raise ValueError('Not a valid location')
@@ -91,14 +91,14 @@ class Event(db.Model, SerializerMixin):
 
     @validates('name')
     def set_price(self, key, name):
-        if isinstance(name, str) and 1 <= name <= 20:
+        if isinstance(name, str) and 1 <= len(name) <= 20:
             return name
         else:
             raise ValueError('Not a valid name')
         
     @validates('location')
     def set_price(self, key, location):
-        if isinstance(location, str) and 1 <= location <= 50:
+        if isinstance(location, str) and 1 <= len(location) <= 50:
             return location
         else:
             raise ValueError('Not a valid location')
@@ -114,6 +114,7 @@ class FoodTruckEvent(db.Model, SerializerMixin):
     food_cost = db.Column(db.Float)
     beverage_cost = db.Column(db.Float)
     fuel_cost = db.Column(db.Float)
+    hourly_wages = db.Column(db.Float)
 
     # foreign keys
     food_truck_id = db.Column(db.Integer, db.ForeignKey("food_truck_table.id"))
@@ -124,7 +125,7 @@ class FoodTruckEvent(db.Model, SerializerMixin):
     event = db.relationship('Event', back_populates = 'food_truck_event')
 
     #serialization
-    serialize_rules = ('-food_truck.food_truck_event', '-event.food_truck_event', 'profit')
+    serialize_rules = ('-food_truck', '-event', 'profit')
 
 
     #calculate total profit
