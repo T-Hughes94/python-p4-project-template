@@ -5,7 +5,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { NavLink } from 'react-router-dom';
 
-function Navbarz({user, setUser}) {
+function NavBar({user, setUser}) {
   function handleLogout(){
     fetch('/api/logout', {
       method: 'DELETE', 
@@ -32,7 +32,8 @@ function Navbarz({user, setUser}) {
             <NavDropdown title="Pages" id="basic-nav-dropdown">
               <NavDropdown.Item href="/Home">Home</NavDropdown.Item>
               <NavDropdown.Item href="/Events">Events Page</NavDropdown.Item>
-              <NavDropdown.Item href="/EventForm">Add Events</NavDropdown.Item>
+              <NavDropdown.Item href="/EventForm">Add Event</NavDropdown.Item>
+              <NavDropdown.Item href="/TruckForm">Add Truck</NavDropdown.Item>
               <NavDropdown.Item href="/IncomeChart">Income Chart</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
             
@@ -46,4 +47,4 @@ function Navbarz({user, setUser}) {
   );
 }
 
-export default Navbarz;
+export default NavBar;
