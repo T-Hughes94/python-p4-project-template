@@ -15,6 +15,7 @@ function App() {
   // User state
   const [user, setUser] = useState({});
   const [events, setEvents] = useState([]);
+  const [trucks, setTrucks] = useState([]);
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -24,22 +25,39 @@ function App() {
       .catch((error) => console.error('Error fetching user data:', error));
   }, []);
 
+  console.log(user)
+
+  
   return (
     <BrowserRouter>
+    {user.food_truck ?
+    <div>
       <NavBar user={user} setUser={setUser} />
       <div>
         <nav className="navbar custom-navbar">
           <Routes className="navbar-routes">
-            <Route path="/Login" element={<Login setUser={setUser} />} />
+            <Route path="/" element={<Login setUser={setUser} />} />
             <Route path="/Signup" element={<Signup />} />
-            <Route path="/Home" element={<Home user={user} />} />
-            <Route path="/EventForm" element={<EventForm user={user} setEvents={setEvents} />} />
-            <Route path="/TruckForm" element={<TruckForm user={user} setEvents={setEvents} />} />
-            <Route path="/Events" element={<Events events={events} />} /> 
+            <Route path="/home" element={<Home user={user} />} />
+            <Route path="/EventForm" element={<EventForm user={user} setEvents={setEvents} setTrucks={setTrucks} />} />
+            <Route path="/TruckForm" element={<TruckForm user={user} setTrucks={setTrucks} />} />
+            <Route path="/Events" element={<Events events={events} trucks={trucks} />} /> 
             <Route path="/IncomeChart" element={<IncomeChart />} />
           </Routes>
         </nav>
       </div>
+      </div>
+      : 
+      <div>
+          <nav className="navbar custom-navbar">
+          <Routes className="navbar-routes">
+            <Route path="/" element={<Login setUser={setUser} />} />
+            <Route path="/Signup" element={<Signup setUser={setUser}/>} />
+            <Route path="/home" element={<TruckForm user={user} setTrucks={setTrucks} />} />
+          </Routes>
+        </nav>
+      </div>
+      }
     </BrowserRouter>
   );
 }

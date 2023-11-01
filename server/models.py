@@ -76,6 +76,9 @@ class FoodTruck(db.Model, SerializerMixin):
             return location
         else:
             raise ValueError('Not a valid location')
+        
+    serialize_rules = ('-user', '-food_truck_event')
+
 
 #table name
 class Event(db.Model, SerializerMixin):

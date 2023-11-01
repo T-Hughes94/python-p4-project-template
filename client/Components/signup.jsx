@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function Signup({ history }) {
+function Signup({ history, setUser }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [profile_img, setProfileImg] = useState('https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg');
 
+  const navigate = useNavigate()
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
@@ -39,7 +41,8 @@ function Signup({ history }) {
       .then((data) => {
         if (data.ok) {
           // Handle a successful signup, redirect to the login page
-          history.push('/login');
+          setUser(data)
+          navigate('/home')
         } else {
           // Handle a signup error
           alert(data.message);

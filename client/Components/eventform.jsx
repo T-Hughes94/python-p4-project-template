@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -13,18 +13,31 @@ function EventForm() {
   const [foodCost, setFoodCost] = useState(0.0);
   const [beverageCost, setBeverageCost] = useState(0.0);
   const [fuelCost, setFuelCost] = useState(0.0);
-  const [foodTruckId, setFoodTruckId] = useState('');
-  const [eventId, setEventId] = useState('');
   const [hourlyWages, setHourlyWages] = useState(0.0);
 
   // EventInfo State
-  const [eventName, setEventName] = useState('');
-  const [eventLocation, setEventLocation] = useState('');
-  const [eventDescription, setEventDescription] = useState('');
+  const [foodTruckId, setFoodTruckId] = useState('');
+  const [eventId, setEventId] = useState('');
+
+  const [events, setEvents] = useState([]);
+  const [foodTrucks, setFoodTrucks] = useState([]);
+
+  useEffect(() => {
+    // Fetch the list of events and food trucks
+    fetch('/api/events')
+      .then((response) => response.json())
+      .then((data) => setEvents(data))
+      .catch((error) => console.error('Error fetching events data:', error));
+
+    fetch('/api/foodtrucks')
+      .then((response) => response.json())
+      .then((data) => setFoodTrucks(data))
+      .catch((error) => console.error('Error fetching food trucks data:', error));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const financialData = {
       food_sales: foodSales,
       beverage_sales: beverageSales,
@@ -35,13 +48,11 @@ function EventForm() {
       food_truck_id: foodTruckId,
       event_id: eventId
     };
-  
+
     const eventInfo = {
-      event_name: eventName,
-      event_location: eventLocation,
-      event_description: eventDescription
+      event_id: eventId,
     };
-  
+
     try {
       // Send financial data to the server
       const financialResponse = fetch('/api/truckevents', {
@@ -51,20 +62,19 @@ function EventForm() {
         },
         body: JSON.stringify(financialData),
       });
-  
+
       if (financialResponse.ok) {
-        print(eventInfo)
-        //Send event data to the server
-        const eventResponse =fetch('/api/events', {
+        // Send event data to the server
+        const eventResponse = fetch('/api/events', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(eventInfo),
         });
-  
+
         if (eventResponse.ok) {
-          navigate('/Events'); 
+          navigate('/Events');
         } else {
           console.error('Failed to submit event data.');
         }
@@ -75,11 +85,39 @@ function EventForm() {
       console.error('Network error:', error);
     }
   };
-  
-
 
   return (
     <div>
+      <Form.Group className="mb-3">
+        <Form.Label>Food Truck ID</Form.Label>
+        <Form.Control
+          as="select"
+          value={foodTruckId}
+          onChange={(e) => setFoodTruckId(e.target.value)}
+        >
+          <option value="">Select a Food Truck</option>
+          {foodTrucks.map((truck) => (
+            <option key={truck.id} value={truck.id}>
+              {truck.name}
+            </option>
+          ))}
+        </Form.Control>
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Event ID</Form.Label>
+        <Form.Control
+          as="select"
+          value={eventId}
+          onChange={(e) => setEventId(e.target.value)}
+        >
+          <option value="">Select an Event</option>
+          {events.map((event) => (
+            <option key={event.id} value={event.id}>
+              {event.name}
+            </option>
+          ))}
+        </Form.Control>
+      </Form.Group>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Food Sales</Form.Label>
@@ -159,51 +197,6 @@ function EventForm() {
           </InputGroup>
         </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Food Truck ID</Form.Label>
-          <Form.Control
-            type="number"
-            value={foodTruckId}
-            onChange={(e) => setFoodTruckId(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Event ID</Form.Label>
-          <Form.Control
-            type="number"
-            value={eventId}
-            onChange={(e) => setEventId(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Event Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Event Location</Form.Label>
-          <Form.Control
-            type="text"
-            value={eventLocation}
-            onChange={(e) => setEventLocation(e.target.value)}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Event Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            value={eventDescription}
-            onChange={(e) => setEventDescription(e.target.value)}
-          />
-        </Form.Group>
-
         <Button variant="primary" type="submit">
           Submit
         </Button>
@@ -213,9 +206,3 @@ function EventForm() {
 }
 
 export default EventForm;
-
-
-
-
-
-

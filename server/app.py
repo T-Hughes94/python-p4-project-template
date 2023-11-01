@@ -134,7 +134,8 @@ class FoodTruck_Route(Resource):
             new_food_truck = FoodTruck(
                 name = data['name'],
                 food_type = data['food_type'],
-                description = data['description']
+                description = data['description'],
+                user_id = session.get('user_id')
             )
         except ValueError as e:
             return {"errors": str(e)}, 400
@@ -271,7 +272,7 @@ class FoodTruckEvent_Route(Resource):
              food_cost = data['food_cost'],
              beverage_cost = data['beverage_cost'],
              fuel_cost = data['fuel_cost'],
-            #  hourly_wages = data['hourly_wages'],
+             hourly_wages = data['hourly_wages'],
              food_truck_id=data['food_truck_id'],
              event_id=data['event_id']
              )

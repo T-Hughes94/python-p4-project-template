@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({setUser}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate()
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -31,6 +33,8 @@ const Login = ({setUser}) => {
     } catch (error) {
       setError('Error: ' + error.message);
     }
+
+    navigate('/home')
   };
 
   const handleLogout = () => {
@@ -71,6 +75,7 @@ const Login = ({setUser}) => {
           Login
         </button>
       </form>
+      <button onClick={()=> navigate('/signup')}>Need to create an account? Click Here!</button>
     </div>
   );
 };
