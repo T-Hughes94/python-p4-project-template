@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import EventFormCard from './EventFormCard';
 import { useNavigate } from 'react-router-dom';
 
 function EventForm() {
   const navigate = useNavigate();
 
-  // Financial Data State
+  // Default values for your state variables
   const [foodSales, setFoodSales] = useState(0.0);
   const [beverageSales, setBeverageSales] = useState(0.0);
   const [foodCost, setFoodCost] = useState(0.0);
@@ -15,12 +16,17 @@ function EventForm() {
   const [fuelCost, setFuelCost] = useState(0.0);
   const [hourlyWages, setHourlyWages] = useState(0.0);
 
+  // Placeholder for selectedFoodTruck - make sure to define and set it as needed
+  const selectedFoodTruck = 'Your selected food truck'; // Example placeholder value
+
   // EventInfo State
   const [foodTruckId, setFoodTruckId] = useState('');
   const [eventId, setEventId] = useState('');
 
   const [events, setEvents] = useState([]);
   const [foodTrucks, setFoodTrucks] = useState([]);
+  const [truckEventData, setTruckEventData] = useState([]);
+  const [profit, setProfit] = useState(0.0); // State for profit
 
   useEffect(() => {
     // Fetch the list of events and food trucks
@@ -31,9 +37,20 @@ function EventForm() {
 
     fetch('/api/foodtrucks')
       .then((response) => response.json())
-      .then((data) => setFoodTrucks(data))
+      .then((data) => {
+        console.log(data);
+        setFoodTrucks(data);
+      })
       .catch((error) => console.error('Error fetching food trucks data:', error));
   }, []);
+
+  useEffect(() => {
+    // Calculate profit whenever financial data changes
+    const totalRevenue = foodSales + beverageSales;
+    const totalCost = foodCost + beverageCost + fuelCost + hourlyWages;
+    const profitValue = totalRevenue - totalCost;
+    setProfit(profitValue);
+  }, [foodSales, beverageSales, foodCost, beverageCost, fuelCost, hourlyWages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,45 +63,29 @@ function EventForm() {
       fuel_cost: fuelCost,
       hourly_wages: hourlyWages,
       food_truck_id: foodTruckId,
-      event_id: eventId
-    };
-
-    const eventInfo = {
       event_id: eventId,
     };
 
     try {
       // Send financial data to the server
-      const financialResponse = fetch('/api/truckevents', {
+      const financialResponse = await fetch('/api/truckevents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(financialData),
       });
+      const data = await financialResponse.json();
+      console.log(data);
 
-      if (financialResponse.ok) {
-        // Send event data to the server
-        const eventResponse = fetch('/api/events', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(eventInfo),
-        });
-
-        if (eventResponse.ok) {
-          navigate('/Events');
-        } else {
-          console.error('Failed to submit event data.');
-        }
-      } else {
-        console.error('Failed to submit financial data.');
-      }
+      // After posting the financial data, fetch truck event data
+      const truckEventDataResponse = await fetch(`/api/truckevents/${eventId}`);
+      const truckEventData = await truckEventDataResponse.json();
+      setTruckEventData(truckEventData);
     } catch (error) {
       console.error('Network error:', error);
     }
-  };
+  }
 
   return (
     <div>
@@ -201,8 +202,22 @@ function EventForm() {
           Submit
         </Button>
       </Form>
+
+      {events.map((event) => (
+        <EventFormCard
+          key={event.id}
+          event={event}
+          foodTruck={{ name: selectedFoodTruck }}
+          financialData={truckEventData}
+        />
+      ))}
+
+      <p>Profit: ${profit.toFixed(2)}</p>
     </div>
   );
 }
 
 export default EventForm;
+
+
+       

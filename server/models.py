@@ -88,6 +88,8 @@ class Event(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable = False)
     location = db.Column(db.String, nullable = False)
     description = db.Column(db.String, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user_table.id'))
+
 
     #relationships
     food_truck_event = db.relationship('FoodTruckEvent', back_populates = 'event')
@@ -128,7 +130,7 @@ class FoodTruckEvent(db.Model, SerializerMixin):
     event = db.relationship('Event', back_populates = 'food_truck_event')
 
     #serialization
-    serialize_rules = ('-food_truck', '-event', 'profit')
+    serialize_rules = ('-food_truck.food_truck_event', '-event.food_truck_event', 'profit')
 
 
     #calculate total profit

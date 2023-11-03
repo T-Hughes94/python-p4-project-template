@@ -125,26 +125,34 @@ api.add_resource(UserById_Route, '/users/<int:id>')
 ############################ full crud FoodTruck routes ########################################
 class FoodTruck_Route(Resource):
     def get(self):
-        food_trucks = [f.to_dict() for f in FoodTruck.query.all()]
-        return food_trucks, 200
+        user_id = session.get('user_id')
+        if user_id is not None:
+            food_trucks = [f.to_dict() for f in FoodTruck.query.filter_by(user_id=user_id)]
+            return food_trucks, 200
+        else:
+            return {"error": "User not authenticated"}, 401
+
     
     def post(self):
         data = request.get_json()
-        try:
-            new_food_truck = FoodTruck(
-                name = data['name'],
-                food_type = data['food_type'],
-                description = data['description'],
-                user_id = session.get('user_id')
-            )
-        except ValueError as e:
-            return {"errors": str(e)}, 400
+        user_id = session.get('user_id')
+        if user_id is not None:
+            try:
+                new_food_truck = FoodTruck(
+                    name=data['name'],
+                    food_type=data['food_type'],
+                    description=data['description'],
+                    user_id=user_id
+                )
+            except ValueError as e:
+                return {"errors": str(e)}, 400
+
+            db.session.add(new_food_truck)
+            db.session.commit()
             
-
-        db.session.add(new_food_truck)
-        db.session.commit()
-
-        return new_food_truck.to_dict(), 200
+            return new_food_truck.to_dict(), 200
+        else:
+            return {"error": "User not authenticated"}, 401
 
 api.add_resource(FoodTruck_Route, '/foodtrucks')
         
@@ -193,25 +201,34 @@ api.add_resource(FoodTruckById_Route, '/foodtrucks/<int:id>')
 
 class Event_Route(Resource):
     def get(self):
-        events = [e.to_dict() for e in Event.query.all()]
-        return events, 200
-    
+        user_id = session.get('user_id')
+
+        if user_id is not None:
+            events = [e.to_dict() for e in Event.query.filter_by(user_id=user_id)]
+            return events, 200
+        else:
+            return {"error": "User not authenticated"}, 401
+
     def post(self):
         data = request.get_json()
-        try:
-            new_event = Event(
-                name = data['name'],
-                location= data['location'],
-                description = data['description']
-            )
-        except ValueError as e:
-            return {"errors": str(e)}, 400
-            
+        user_id = session.get('user_id')
 
-        db.session.add(new_event)
-        db.session.commit()
+        if user_id is not None:
+            try:
+                new_event = Event(
+                    name=data['name'],
+                    location=data['location'],
+                    description=data['description'],
+                    user_id=user_id
+                )
+            except ValueError as e:
+                return {"errors": str(e)}, 400
 
-        return new_event.to_dict(), 200
+            db.session.add(new_event)
+            db.session.commit()
+            return new_event.to_dict(), 200
+        else:
+            return {"error": "User not authenticated"}, 401
 
 api.add_resource(Event_Route, '/events')
         

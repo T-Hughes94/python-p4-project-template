@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import TruckCard from './TruckCard';
 
-function TruckForm() {
+function Trucks() {
   const [formData, setFormData] = useState({
     name: '',
     food_type: '',
     description: '',
   });
+
+  const [foodTrucks, setFoodTrucks] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,27 +31,58 @@ function TruckForm() {
     })
       .then((response) => {
         if (response.status === 200) {
-          // Truck creation was successful
           console.log('Truck created successfully');
-          // Optionally, you can redirect the user to a different page
-          // window.location.href = '/some-other-page';
+          setFormData({
+            name: '',
+            food_type: '',
+            description: '',
+          });
+          fetchFoodTrucks();
         } else {
-          // Handle errors, e.g., display an error message to the user
           console.error('Truck creation failed');
         }
       })
       .catch((error) => {
         console.error('Error:', error);
       });
-
-    // Reset form fields
-    setFormData({
-      name: '',
-      food_type: '',
-      description: '',
-    });
-    
   };
+
+  const fetchFoodTrucks = () => {
+    fetch('/api/foodtrucks')
+      .then((response) => {
+        if (response.status === 401) {
+          setError('Unauthorized access. Please log in.');
+        } else if (response.status === 200) {
+          return response.json();
+        } else {
+          throw new Error('Failed to fetch food trucks');
+        }
+      })
+      .then((data) => {
+        setFoodTrucks(data);
+        setError(null);
+      })
+      .catch((error) => {
+        console.error('Error fetching food trucks data:', error);
+        setError('Failed to fetch food trucks data. Please try again later.');
+      });
+  };
+
+  const handleDelete = (foodTruckId) => {
+    fetch(`/api/foodtrucks/${foodTruckId}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+       
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchFoodTrucks();
+  }, []);
 
   return (
     <div className="container">
@@ -98,9 +133,17 @@ function TruckForm() {
           Create Truck
         </button>
       </form>
+      {error && <p className="text-danger">{error}</p>}
+      <h2>Food Trucks</h2>
+      <div className="row">
+        {foodTrucks.map((foodTruck) => (
+          <div className="col-md-4" key={foodTruck.id}>
+            <TruckCard foodTruck={foodTruck} onDelete={handleDelete} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default TruckForm;
-
+export default Trucks;

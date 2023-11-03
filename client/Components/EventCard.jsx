@@ -1,6 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import * as d3 from 'd3';
 
-function EventCard({ event, onUpdate, onDelete }) {
+function renderPieChart(financialData) {
+  const data = [
+    { label: 'Food Sales', value: financialData.food_sales },
+    { label: 'Beverage Sales', value: financialData.beverage_sales },
+    { label: 'Food Cost', value: financialData.food_cost },
+    { label: 'Beverage Cost', value: financialData.beverage_cost },
+    { label: 'Fuel Cost', value: financialData.fuel_cost },
+    { label: 'Hourly Wages', value: financialData.hourly_wages },
+  ];
+
+  const width = 200;
+  const height = 200;
+  const radius = Math.min(width, height) / 2;
+
+  // Create an SVG container for the pie chart
+  const svg = d3.select('#pie-chart-container')
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .append('g')
+    .attr('transform', `translate(${width / 2},${height / 2})`);
+
+  // Create a color scale
+  const color = d3.scaleOrdinal()
+    .domain(data.map(d => d.label))
+    .range(d3.schemeCategory10);
+
+  // Create a pie layout
+  const pie = d3.pie()
+    .value(d => d.value);
+
+  // Generate the pie slices
+  const arcs = pie(data);
+
+  // Create arc generator
+  const arc = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius);
+
+  // Append the pie slices to the SVG
+  svg.selectAll('path')
+    .data(arcs)
+    .enter()
+    .append('path')
+    .attr('d', arc)
+    .attr('fill', d => color(d.data.label))
+    .append('title')
+    .text(d => `${d.data.label}: ${d.data.value}`);
+}
+function EventCard({ event, onUpdate, onDelete, financialData }) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...event });
 
@@ -110,4 +160,5 @@ function EventCard({ event, onUpdate, onDelete }) {
 }
 
 export default EventCard;
+
 

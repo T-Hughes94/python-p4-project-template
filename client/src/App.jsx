@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from '/Components/Login';
 import Signup from '/Components/Signup';
 import Home from '/Components/Home';
-import TruckForm from '/Components/TruckForm';
+import Trucks from '/Components/Trucks';
 import EventForm from '/Components/EventForm';
 import Events from '/Components/Events';
 import IncomeChart from '/Components/IncomeChart';
@@ -40,7 +40,7 @@ function App() {
             <Route path="/Signup" element={<Signup />} />
             <Route path="/home" element={<Home user={user} />} />
             <Route path="/EventForm" element={<EventForm user={user} setEvents={setEvents} setTrucks={setTrucks} />} />
-            <Route path="/TruckForm" element={<TruckForm user={user} setTrucks={setTrucks} />} />
+            <Route path="/Trucks" element={<Trucks user={user} setTrucks={setTrucks} />} />
             <Route path="/Events" element={<Events events={events} trucks={trucks} />} /> 
             <Route path="/IncomeChart" element={<IncomeChart />} />
           </Routes>
@@ -53,7 +53,7 @@ function App() {
           <Routes className="navbar-routes">
             <Route path="/" element={<Login setUser={setUser} />} />
             <Route path="/Signup" element={<Signup setUser={setUser}/>} />
-            <Route path="/home" element={<TruckForm user={user} setTrucks={setTrucks} />} />
+            <Route path="Home" element={<Trucks user={user} setTrucks={setTrucks} />} />
           </Routes>
         </nav>
       </div>
@@ -63,4 +63,6 @@ function App() {
 }
 
 export default App;
+
+
 

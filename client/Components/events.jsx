@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import EventCard from './EventCard';
 
@@ -151,6 +150,7 @@ function Events() {
           <div className="col-md-4" key={event.id}>
             <EventCard
               event={event}
+              financialData={event.financialData}
               onUpdate={handleUpdateEvent}
               onDelete={handleDeleteEvent}
             />
