@@ -276,41 +276,36 @@ api.add_resource(EventById_Route, '/events/<int:id>')
 ############################ full crud FoodTruckEvent routes ########################################
 class FoodTruckEvent_Route(Resource):
     def get(self):
-        food_truck_events = [t.to_dict() for t in FoodTruckEvent.query.all()]
-        return food_truck_events, 200
-    
+        user_id = session.get('user_id')
+
+        if user_id is not None:
+            # Query food truck events based on the user_id of the associated events
+            food_truck_events = [t.to_dict() for t in FoodTruckEvent.query.join(Event).filter(Event.user_id == user_id)]
+            return food_truck_events, 200
+        else:
+            return {"error": "User not authenticated"}, 401
+
     def post(self):
         data = request.get_json()
-        print(data)
         try:
             new_food_truck_event = FoodTruckEvent(
-             food_sales = data['food_sales'],
-             beverage_sales = data['beverage_sales'],
-             food_cost = data['food_cost'],
-             beverage_cost = data['beverage_cost'],
-             fuel_cost = data['fuel_cost'],
-             hourly_wages = data['hourly_wages'],
-             food_truck_id=data['food_truck_id'],
-             event_id=data['event_id']
-             )
-            
-            event = Event.query.filter_by(id = new_food_truck_event.event_id).first()
-            print(event)
-
-            new_event = Event(
-                name = event.name,
-                location = event.location,
-                description = event.description,
+                food_sales=data['food_sales'],
+                beverage_sales=data['beverage_sales'],
+                food_cost=data['food_cost'],
+                beverage_cost=data['beverage_cost'],
+                fuel_cost=data['fuel_cost'],
+                hourly_wages=data['hourly_wages'],
+                food_truck_id=data['food_truck_id'],
+                event_id=data['event_id']
             )
         except ValueError as e:
             return {"errors": str(e)}, 400
-            
 
         db.session.add(new_food_truck_event)
-        db.session.add(new_event)
         db.session.commit()
 
         return new_food_truck_event.to_dict(), 200
+
 
 api.add_resource(FoodTruckEvent_Route, '/truckevents')
         
@@ -319,8 +314,8 @@ class FoodTruckEventById_Route(Resource):
         food_truck_event = FoodTruckEvent.query.filter_by(id=id).first()
         if food_truck_event:
             return food_truck_event.to_dict(), 200
-        return {"error": "Event not found"}, 404
-    
+        return {"error": "FoodTruckEvent not found"}, 404
+
     def patch(self, id):
         food_truck_event = FoodTruckEvent.query.filter_by(id=id).first()
 
@@ -338,8 +333,19 @@ class FoodTruckEventById_Route(Resource):
                 db.session.add(food_truck_event)
                 db.session.commit()
                 return food_truck_event.to_dict(), 202
-        
-        return {"error": "Event not found"}, 404
+
+    def delete(self, id):
+        food_truck_event = FoodTruckEvent.query.filter_by(id=id).first()
+        if food_truck_event:
+            try:
+                db.session.delete(food_truck_event)
+                db.session.commit()
+                return '', 204
+            except Exception:
+                return '', 400
+        else:
+            return {"error": "FoodTruckEvent not found"}, 404
+
     
     def delete(self, id):
         food_truck_event = FoodTruckEvent.query.filter_by(id=id).first()

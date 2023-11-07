@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
-import EventFormCard from './EventFormCard';
+import FoodTruckEventCard from './FoodTruckEventCard'; // Import the updated card component
 import { useNavigate } from 'react-router-dom';
 
 function EventForm() {
@@ -25,7 +25,7 @@ function EventForm() {
 
   const [events, setEvents] = useState([]);
   const [foodTrucks, setFoodTrucks] = useState([]);
-  const [truckEventData, setTruckEventData] = useState([]);
+  const [truckEventData, setTruckEventData] = useState([]); // State variable for truckevents
   const [profit, setProfit] = useState(0.0); // State for profit
 
   useEffect(() => {
@@ -42,6 +42,12 @@ function EventForm() {
         setFoodTrucks(data);
       })
       .catch((error) => console.error('Error fetching food trucks data:', error));
+
+    // Fetch the list of truckevents
+    fetch('/api/truckevents')
+      .then((response) => response.json())
+      .then((data) => setTruckEventData(data))
+      .catch((error) => console.error('Error fetching truckevents data:', error));
   }, []);
 
   useEffect(() => {
@@ -203,21 +209,19 @@ function EventForm() {
         </Button>
       </Form>
 
-      {events.map((event) => (
-        <EventFormCard
+      {/* Map through truckEventData to render FoodTruckEventCard components */}
+      {truckEventData.map((event) => (
+        <FoodTruckEventCard
           key={event.id}
-          event={event}
-          foodTruck={{ name: selectedFoodTruck }}
-          financialData={truckEventData}
+          foodTruckEvent={event}
+          event={truckEventData.event}
+          foodTruck={truckEventData.foodTruck}
         />
       ))}
 
-      <p>Profit: ${profit.toFixed(2)}</p>
+      {/* <p>Profit: ${profit.toFixed(2)}</p> */}
     </div>
   );
 }
 
 export default EventForm;
-
-
-       

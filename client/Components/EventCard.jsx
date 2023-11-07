@@ -142,12 +142,7 @@ function EventCard({ event, onUpdate, onDelete, financialData }) {
             <h5 className="card-title">{event.name}</h5>
             <h6 className="card-subtitle mb-2 text-muted">{event.location}</h6>
             <p className="card-text">{event.description}</p>
-            <p className="card-text">Food Sales: ${event.food_sales}</p>
-            <p className="card-text">Beverage Sales: ${event.beverage_sales}</p>
-            <p className="card-text">Food Cost: ${event.food_cost}</p>
-            <p className="card-text">Beverage Cost: ${event.beverage_cost}</p>
-            <p className="card-text">Fuel Cost: ${event.fuel_cost}</p>
-            <p className="card-text">Hourly Wages: ${event.hourly_wages}</p>
+           
           </div>
         )}
 

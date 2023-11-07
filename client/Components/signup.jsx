@@ -5,7 +5,7 @@ function Signup({ history, setUser }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [profile_img, setProfileImg] = useState('https://i.natgeofe.com/n/548467d8-c5f1-4551-9f58-6817a8d2c45e/NationalGeographic_2572187_square.jpg');
+  const [profile_img, setProfileImg] = useState('https://www.shareicon.net/data/2016/09/01/822751_user_512x512.png');
 
   const navigate = useNavigate()
   const handleInputChange = (event) => {

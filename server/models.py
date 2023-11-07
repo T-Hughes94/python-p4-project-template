@@ -120,6 +120,7 @@ class FoodTruckEvent(db.Model, SerializerMixin):
     beverage_cost = db.Column(db.Float)
     fuel_cost = db.Column(db.Float)
     hourly_wages = db.Column(db.Float)
+    
 
     # foreign keys
     food_truck_id = db.Column(db.Integer, db.ForeignKey("food_truck_table.id"))
