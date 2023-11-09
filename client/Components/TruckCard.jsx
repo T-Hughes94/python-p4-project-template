@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { Col } from 'react-bootstrap';
 
 function TruckCard({ foodTruck, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -29,46 +33,59 @@ function TruckCard({ foodTruck, onUpdate, onDelete }) {
   };
 
   return (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <Card.Body>
         {isEditing ? (
-          <div>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="food_type"
-              value={formData.food_type}
-              onChange={handleChange}
-            />
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-            />
-          </div>
+          <Form>
+            <Form.Row>
+              <Col>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </Col>
+              <Col>
+                <Form.Control
+                  type="text"
+                  name="food_type"
+                  value={formData.food_type}
+                  onChange={handleChange}
+                />
+              </Col>
+            </Form.Row>
+            <Form.Group>
+              <Form.Control
+                as="textarea"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Form>
         ) : (
           <div>
-            <h5 className="card-title">{foodTruck.name}</h5>
-            <p className="card-text">Food Type: {foodTruck.food_type}</p>
-            <p className="card-text">Description: {foodTruck.description}</p>
+            <Card.Title>{foodTruck.name}</Card.Title>
+            <Card.Text>Food Type: {foodTruck.food_type}</Card.Text>
+            <Card.Text>Description: {foodTruck.description}</Card.Text>
           </div>
         )}
 
-        <button onClick={handleEditClick}>Edit</button>
-        <button onClick={handleDeleteClick}>Delete</button>
-        {isEditing && <button onClick={handleSaveClick}>Save</button>}
-      </div>
-    </div>
+        <Button variant="primary" onClick={handleEditClick}>
+          Edit
+        </Button>
+        <Button variant="danger" onClick={handleDeleteClick}>
+          Delete
+        </Button>
+        {isEditing && (
+          <Button variant="success" onClick={handleSaveClick}>
+            Save
+          </Button>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
 
 export default TruckCard;
-
-
-
-

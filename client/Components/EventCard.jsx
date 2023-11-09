@@ -1,56 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import * as d3 from 'd3';
+import React, { useState } from 'react';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { Col } from 'react-bootstrap';
 
-function renderPieChart(financialData) {
-  const data = [
-    { label: 'Food Sales', value: financialData.food_sales },
-    { label: 'Beverage Sales', value: financialData.beverage_sales },
-    { label: 'Food Cost', value: financialData.food_cost },
-    { label: 'Beverage Cost', value: financialData.beverage_cost },
-    { label: 'Fuel Cost', value: financialData.fuel_cost },
-    { label: 'Hourly Wages', value: financialData.hourly_wages },
-  ];
-
-  const width = 200;
-  const height = 200;
-  const radius = Math.min(width, height) / 2;
-
-  // Create an SVG container for the pie chart
-  const svg = d3.select('#pie-chart-container')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .append('g')
-    .attr('transform', `translate(${width / 2},${height / 2})`);
-
-  // Create a color scale
-  const color = d3.scaleOrdinal()
-    .domain(data.map(d => d.label))
-    .range(d3.schemeCategory10);
-
-  // Create a pie layout
-  const pie = d3.pie()
-    .value(d => d.value);
-
-  // Generate the pie slices
-  const arcs = pie(data);
-
-  // Create arc generator
-  const arc = d3.arc()
-    .innerRadius(0)
-    .outerRadius(radius);
-
-  // Append the pie slices to the SVG
-  svg.selectAll('path')
-    .data(arcs)
-    .enter()
-    .append('path')
-    .attr('d', arc)
-    .attr('fill', d => color(d.data.label))
-    .append('title')
-    .text(d => `${d.data.label}: ${d.data.value}`);
-}
-function EventCard({ event, onUpdate, onDelete, financialData }) {
+function EventCard({ event, financialData, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...event });
 
@@ -79,81 +33,64 @@ function EventCard({ event, onUpdate, onDelete, financialData }) {
   };
 
   return (
-    <div className="card">
-      <div className="card-body">
+    <Card>
+      <Card.Body>
         {isEditing ? (
-          <div>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-            />
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-            />
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="food_sales"
-              value={formData.food_sales}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="beverage_sales"
-              value={formData.beverage_sales}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="food_cost"
-              value={formData.food_cost}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="beverage_cost"
-              value={formData.beverage_cost}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="fuel_cost"
-              value={formData.fuel_cost}
-              onChange={handleChange}
-            />
-            <input
-              type="number"
-              name="hourly_wages"
-              value={formData.hourly_wages}
-              onChange={handleChange}
-            />
-          </div>
+          <Form>
+            <Form.Row>
+              <Col>
+                <Form.Group>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group>
+                  <Form.Control
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Form.Row>
+            <Form.Group>
+              <Form.Control
+                as="textarea"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Form>
         ) : (
           <div>
-            <h5 className="card-title">{event.name}</h5>
-            <h6 className="card-subtitle mb-2 text-muted">{event.location}</h6>
-            <p className="card-text">{event.description}</p>
-           
+            <Card.Title>{event.name}</Card.Title>
+            <Card.Text>Location: {event.location}</Card.Text>
+            <Card.Text>Description: {event.description}</Card.Text>
+            <Card.Text>Financial Data: {financialData}</Card.Text>
           </div>
         )}
 
-        <button onClick={handleEditClick}>Edit</button>
-        <button onClick={handleDeleteClick}>Delete</button>
-        {isEditing && <button onClick={handleSaveClick}>Save</button>}
-      </div>
-    </div>
+        <Button variant="primary" onClick={handleEditClick}>
+          Edit
+        </Button>
+        <Button variant="danger" onClick={handleDeleteClick}>
+          Delete
+        </Button>
+        {isEditing && (
+          <Button variant="success" onClick={handleSaveClick}>
+            Save
+          </Button>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
 
 export default EventCard;
-
-

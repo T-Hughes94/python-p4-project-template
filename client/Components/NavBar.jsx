@@ -30,14 +30,14 @@ function NavBar({ user, setUser }) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto"> 
             { Object.values(user).length > 2 ? (
-              <button onClick={handleLogout}>Logout</button>
+              <button className="btn btn-primary" onClick={handleLogout}>Logout</button>
             ) : (
               <>
                 <Nav.Link>
                   <NavLink to="/">Login</NavLink>
                 </Nav.Link>
                 <Nav.Link>
-                  <NavLink to="/signup">Sign-Up</NavLink>
+                  <NavLink to="/Signup">Sign-Up</NavLink>
                 </Nav.Link>
               </>
             )}

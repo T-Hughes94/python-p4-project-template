@@ -1,39 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import Events from "./Events"; // Corrected import path
-import EventForm from "./EventForm"; // Corrected import path
-import IncomeChart from "./IncomeChart"; // Corrected import path
-import { NavLink } from 'react-router-dom';
+import React from 'react';
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
+import Image from 'react-bootstrap/Image';
+import '/src/Home.css'; // Import a custom CSS file for additional styling
 
-function Home({user}) {
-
-  console.log(user)
+function Home({ user }) {
   return (
-    <div>
-      {user ? (
-        <div className="user-profile">
-          <img src={user.profile_img} alt="Profile" />
-          <span>{user.name}</span>
-          <span>{user.email}</span>
-        </div>
-      ) : (
-        <p>User not logged in</p>
-      )}
-      <nav>
-        <ul>
-          <li>
-          <NavLink to="/Events">Events</NavLink>
-          </li>
-          <li>
-          <NavLink to="/EventForm">Add Events</NavLink>
-          </li>
-          <li>
-          <NavLink to="/IncomeChart">Income Chart</NavLink>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <Container className="my-5">
+      <header className="text-center mb-4">
+        <h1>Welcome</h1>
+        {user ? (
+          <div className="user-profile">
+            <Image src={user.profile_img} alt="Profile" fluid />
+            <h3 className="user-name">{user.name}</h3>
+            <p>{user.email}</p>
+          </div>
+        ) : (
+          <p>User not logged in</p>
+        )}
+      </header>
+    </Container>
   );
 }
 
 export default Home;
-

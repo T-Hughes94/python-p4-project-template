@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import EventCard from './EventCard';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Container, Row, Col } from 'react-bootstrap';
 
 function Events() {
   const [formData, setFormData] = useState({
@@ -9,6 +12,7 @@ function Events() {
   });
 
   const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,33 +52,22 @@ function Events() {
 
   const fetchEvents = () => {
     fetch('/api/events')
-      .then((response) => response.json())
-      .then((data) => setEvents(data))
-      .catch((error) => console.error('Error fetching events data:', error));
-  };
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const handleUpdateEvent = (updatedEvent) => {
-    fetch(`/api/events/${updatedEvent.id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedEvent),
-    })
       .then((response) => {
-        if (response.status === 200) {
-          console.log('Event updated successfully');
-          fetchEvents();
+        if (response.status === 401) {
+          setError('Unauthorized access. Please log in.');
+        } else if (response.status === 200) {
+          return response.json();
         } else {
-          console.error('Event update failed');
+          throw new Error('Failed to fetch events');
         }
       })
+      .then((data) => {
+        setEvents(data);
+        setError(null);
+      })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error('Error fetching events data:', error);
+        setError('Failed to fetch events data. Please try again later.');
       });
   };
 
@@ -83,84 +76,72 @@ function Events() {
       method: 'DELETE',
     })
       .then((response) => {
-        if (response.status === 204) {
-          console.log('Event deleted successfully');
-          fetchEvents();
-        } else {
-          console.error('Event deletion failed');
-        }
+        // Handle delete success or failure if needed
       })
       .catch((error) => {
         console.error('Error:', error);
       });
   };
 
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   return (
-    <div className="container">
+    <Container className="my-5">
       <h2>Create a New Event</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Event Name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="location" className="form-label">
-            Location
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="location"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
-          <textarea
-            className="form-control"
-            id="description"
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Event Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+          <Col md={4}>
+            <Form.Group>
+              <Form.Label>Location</Form.Label>
+              <Form.Control
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Form.Group>
+          <Form.Label>Description</Form.Label>
+          <Form.Control
+            as="textarea"
             name="description"
             value={formData.description}
             onChange={handleChange}
             required
           />
-        </div>
-        <button type="submit" className="btn btn-primary">
+        </Form.Group>
+        <Button type="submit" variant="primary">
           Create Event
-        </button>
-      </form>
-      <h2>Events</h2>
+        </Button>
+      </Form>
+      {error && <p className="text-danger">{error}</p>}
+      <h2></h2>
       <div className="row">
         {events.map((event) => (
           <div className="col-md-4" key={event.id}>
-            <EventCard
-              event={event}
-              financialData={event.financialData}
-              onUpdate={handleUpdateEvent}
-              onDelete={handleDeleteEvent}
-            />
+            <EventCard event={event} onDelete={handleDeleteEvent} />
           </div>
         ))}
       </div>
-    </div>
+    </Container>
   );
 }
 
 export default Events;
-
-

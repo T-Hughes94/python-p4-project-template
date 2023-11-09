@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
 
-function Signup({ history, setUser }) {
+function Signup({ setUser }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [profile_img, setProfileImg] = useState('https://www.shareicon.net/data/2016/09/01/822751_user_512x512.png');
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
   const handleInputChange = (event) => {
     const { name, value } = event.target;
 
@@ -23,12 +26,12 @@ function Signup({ history, setUser }) {
   };
 
   const handleSignup = () => {
-    // form validation
+    // Form validation
     if (!name || !password) {
       alert('Please enter a name and password.');
       return;
     }
-    console.log(JSON.stringify({ name, profile_img, email, password }));
+
     // POST request for a new user account
     fetch('/api/users', {
       method: 'POST',
@@ -39,72 +42,73 @@ function Signup({ history, setUser }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.ok) {
-          // Handle a successful signup, redirect to the login page
-          setUser(data)
-          navigate('/home')
-        } else {
-          // Handle a signup error
-          alert(data.message);
-        }
+        setUser(data);
+        navigate('/home');
       })
       .catch((error) => {
         console.error('Error:', error);
-        // Handle network or other errors
         alert('An error occurred. Please try again.');
       });
   };
 
   return (
-    <div id="signup">
-      <h1 id="signup-title">Sign Up:</h1>
-      <form>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
+    <div className="container d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
+      <h1 className="mb-4">Sign Up</h1>
+      <Form className="mt-4">
+        <InputGroup className="mb-3">
+          <Form.Control
             type="text"
-            id="name"
+            placeholder="Name"
+            aria-label="Name"
             name="name"
             value={name}
             onChange={handleInputChange}
           />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="text"
-            id="email"
+        </InputGroup>
+
+        <InputGroup className="mb-3">
+          <Form.Control
+            type="email"
+            placeholder="Email"
+            aria-label="Email"
             name="email"
             value={email}
             onChange={handleInputChange}
           />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
+        </InputGroup>
+
+        <InputGroup className="mb-3">
+          <Form.Control
             type="password"
-            id="password"
+            placeholder="Password"
+            aria-label="Password"
             name="password"
             value={password}
             onChange={handleInputChange}
           />
-        </div>
-        <div>
-          <label htmlFor="profile_img">Image URL:</label>
-          <input
+        </InputGroup>
+
+        <InputGroup className="mb-3">
+          <Form.Control
             type="text"
-            id="profile_img"
+            placeholder="Image URL"
+            aria-label="Image URL"
             name="profile_img"
             value={profile_img}
             onChange={handleInputChange}
           />
-        </div>
-        <div>
-          <button type="button" onClick={handleSignup}>
+        </InputGroup>
+
+        <div className="text-center">
+          <Button
+            variant="primary"
+            type="button"
+            onClick={handleSignup}
+          >
             Sign Up
-          </button>
+          </Button>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

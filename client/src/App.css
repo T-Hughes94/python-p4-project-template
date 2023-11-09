@@ -7,7 +7,17 @@
 
 body {
  
-  place-items: center;
+  background-image: url('https://img.freepik.com/free-photo/spices-black-background-space-text_169016-3118.jpg?w=996&t=st=1699491021~exp=1699491621~hmac=e2b57014377b2d0225c446da2e0ba2b4d73cf32f0f0913c84db6a0524aaf92d6');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100vh;
+  color: #fff; 
   
 }
 

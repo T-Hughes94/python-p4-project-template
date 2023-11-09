@@ -11,6 +11,7 @@ import NavBar from '/Components/NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
+
 function App() {
   // User state
   const [user, setUser] = useState({});
@@ -38,11 +39,12 @@ function App() {
           <Routes className="navbar-routes">
             <Route path="/" element={<Login setUser={setUser} />} />
             <Route path="/Signup" element={<Signup />} />
-            <Route path="/home" element={<Home user={user} />} />
+            <Route path="/Home" element={<Home user={user} />} />
             <Route path="/EventForm" element={<EventForm user={user} setEvents={setEvents} setTrucks={setTrucks} />} />
             <Route path="/Trucks" element={<Trucks user={user} setTrucks={setTrucks} />} />
             <Route path="/Events" element={<Events events={events} trucks={trucks} />} /> 
             <Route path="/IncomeChart" element={<IncomeChart />} />
+           
           </Routes>
         </nav>
       </div>
@@ -53,7 +55,8 @@ function App() {
           <Routes className="navbar-routes">
             <Route path="/" element={<Login setUser={setUser} />} />
             <Route path="/Signup" element={<Signup setUser={setUser}/>} />
-            <Route path="Home" element={<Trucks user={user} setTrucks={setTrucks} />} />
+            <Route path="/Home" element={<Trucks user={user} setTrucks={setTrucks} />} />
+             <Route path="/IncomeChart" element={<IncomeChart />} />
           </Routes>
         </nav>
       </div>

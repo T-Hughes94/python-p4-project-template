@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TruckCard from './TruckCard';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
 
 function Trucks() {
   const [formData, setFormData] = useState({
@@ -73,7 +76,7 @@ function Trucks() {
       method: 'DELETE',
     })
       .then((response) => {
-       
+        // Handle delete success or failure if needed
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -87,52 +90,41 @@ function Trucks() {
   return (
     <div className="container">
       <h2>Create a New Food Truck</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Truck Name
-          </label>
-          <input
+      <Form onSubmit={handleSubmit}>
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Truck Name</InputGroup.Text>
+          <Form.Control
             type="text"
-            className="form-control"
-            id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
             required
           />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="food_type" className="form-label">
-            Food Type
-          </label>
-          <input
+        </InputGroup>
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Food Type</InputGroup.Text>
+          <Form.Control
             type="text"
-            className="form-control"
-            id="food_type"
             name="food_type"
             value={formData.food_type}
             onChange={handleChange}
             required
           />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
-          <textarea
-            className="form-control"
-            id="description"
+        </InputGroup>
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Description</InputGroup.Text>
+          <Form.Control
+            as="textarea"
             name="description"
             value={formData.description}
             onChange={handleChange}
             required
           />
-        </div>
-        <button type="submit" className="btn btn-primary">
+        </InputGroup>
+        <Button type="submit" variant="primary">
           Create Truck
-        </button>
-      </form>
+        </Button>
+      </Form>
       {error && <p className="text-danger">{error}</p>}
       <h2>Food Trucks</h2>
       <div className="row">
